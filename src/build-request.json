@@ -1,0 +1,313 @@
+{
+  "kind": "build_request",
+  "title": "IEMS browser-based school management app (roles, OTP-style login, RBAC, dashboards, attendance, homework, fees, messaging, undo)",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Create an opening role-selection screen for IEMS with exactly three options: “Student / Parent”, “Teacher”, and “Non-Teaching Staff”. After selecting a role, route the user to a phone number + OTP login screen. Do not show “Chairperson” on the role-selection screen.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "When the app opens, show a role selection screen with three buttons:\nStudent / Parent\nTeacher\nNon-Teaching Staff\nAfter selecting a role, the user goes to phone number + OTP login.\nRules:\nChairperson role must NOT appear on this screen"
+        ]
+      },
+      "acceptanceCriteria": [
+        "App first-load lands on a role selection view with only the three specified buttons",
+        "Clicking any role takes the user to a phone + OTP login view",
+        "No Chairperson option is present on the role selection screen"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Implement phone number + OTP-only authentication flows for all roles, including a direct phone+OTP login path for Chairperson (not via role selection). Ensure there is no email login anywhere. Accounts must be permanently linked to phone numbers. On first successful login, require profile completion before allowing access to dashboards.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Login using phone number + OTP only\nNo email login anywhere\nFirst login requires profile completion\nAccounts permanently linked to phone numbers",
+          "Chairperson accounts are created internally and log in directly with phone OTP"
+        ]
+      },
+      "acceptanceCriteria": [
+        "UI contains no email login fields or email-based flows",
+        "User can authenticate using phone + OTP flow and is associated with that phone number going forward",
+        "First-time login forces a profile completion step (name + address/location) before dashboard access",
+        "Chairperson can access a dedicated “Chairperson login” path using phone + OTP without selecting a role on the opening screen"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Define role-based access control (RBAC) for: Student, Teacher, Non-Teaching Staff (including drivers), and Chairperson. Enforce that Chairperson can view everything but cannot edit user profiles. Enforce that users can edit only their own profile. Include a secure server-side authorization check for every backend mutation and restricted query.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "The system must support:\nStudent\nTeacher\nNon-Teaching Staff (drivers included here)\nChairperson\nRules:\nChairperson can view everything in the system\nChairperson cannot edit user profiles",
+          "Users can edit only their own profile",
+          "System must be secure and prevent role misuse"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend rejects unauthorized actions regardless of frontend behavior",
+        "Chairperson can read all key data (users, attendance, homework, fees, messages) but cannot update any user profile records",
+        "Non-chairperson users can update only their own profile record",
+        "Every restricted backend method validates caller identity and role before performing writes"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Implement profile data model and UI for Name, Phone number, and Address or location. Profile becomes visible after first login (post-completion). Store and retrieve profile data linked to the authenticated phone number. Add an Undo capability for profile changes.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Each profile must include:\nName\nPhone number\nAddress or location\nRules:\nUsers can edit only their own profile\nProfile changes must support Undo\nProfile becomes visible after first login\nAll profile data linked to phone number"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Profile screen shows name, phone number, and address/location for the current user after first login completion",
+        "User can edit only their own profile fields (enforced by backend)",
+        "Undo control reverts the most recent profile edit to the previous saved state",
+        "Profile data is keyed/linked to the user’s phone number in backend storage"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Implement teacher/class assignment data needed to enforce: only the form teacher can mark attendance, and teachers can mark attendance only for their assigned class. Store attendance by class and date. Provide attendance marking and viewing UI per role, and add Undo support for attendance edits.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Attendance can only be marked by the form teacher\nTeachers can mark attendance only for their assigned class\nAttendance stored by class and date\nAttendance edits must support Undo"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Teacher dashboard shows only classes assigned to that teacher",
+        "Attendance marking UI is available only for the form teacher of the selected class",
+        "Attendance records are stored/retrieved by (classId, date)",
+        "Undo action reverts the last attendance edit to the previous saved state",
+        "Unauthorized attendance writes are rejected by backend"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Implement homework/academic updates: teachers can create and send homework to their class; students/parents can view homework on their dashboard. Updates must sync “instantly” via automatic refresh, and homework edits must support Undo.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Teachers can send homework to their class\nStudents and parents see homework instantly on dashboard\nHomework updates must sync in real time\nHomework edits must support Undo"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Teacher can create homework targeted to a specific class they are assigned to",
+        "Student/Parent dashboard displays homework items for the associated class",
+        "Homework list auto-refreshes without manual reload (e.g., polling/periodic refetch) so new items appear shortly after creation",
+        "Undo control reverts the most recent homework edit to its previous saved state",
+        "Backend prevents teachers from sending homework to unassigned classes"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Implement fees management: track pending, paid, and advance fees. Only Chairperson can approve final fee changes. Display school contact and chairperson contact in the fees area. Add Undo support for fee edits.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Track pending, paid, and advance fees\nOnly chairperson can approve final fee changes\nDisplay school contact and chairperson contact\nFee edits must support Undo"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Fees records can represent pending/paid/advance states and amounts",
+        "Non-chairperson users cannot perform final fee approval actions (backend-enforced)",
+        "Fees UI shows school contact and chairperson contact information",
+        "Undo reverts the latest fee edit/adjustment to the prior saved state"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Implement messaging & announcements with a notification panel: Chairperson can broadcast announcements to all users or selected groups; teachers can send notices/homework alerts to students. Messages must sync “instantly” via automatic refresh across sessions.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Chairperson can broadcast announcements to all users or selected groups\nTeachers can send notices or homework alerts to students\nMessages must sync instantly across devices\nA notification panel must exist"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Chairperson can create an announcement addressed to: all users or selected role/groups",
+        "Teachers can send notices/homework alerts scoped to their class(es)",
+        "All roles have a notification panel listing relevant messages",
+        "Notification panel auto-refreshes without manual reload so new messages appear shortly after creation",
+        "Backend enforces sender permissions and audience scoping rules"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Create role-specific dashboards:\n- Student/Parent: attendance view, homework list, printable student ID card\n- Teacher: assigned classes list, attendance marking tools, homework sending tools\n- Chairperson: full school overview dashboard, fees summary, all users list\n- Non-Teaching Staff: mostly view-only dashboard and assigned notices\nEnsure navigation only exposes allowed sections for the logged-in role.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Dashboards\nStudents / Parents\nAttendance view\nHomework list\nPrintable student ID card\nTeachers\nTheir classes\nAttendance marking tools\nHomework sending tools\nChairperson\nFull school overview dashboard\nFees summary\nAll users list\nNon-Teaching Staff\nMostly view-only dashboard\nCan see notices if assigned"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Upon login, user lands on a dashboard appropriate to their role",
+        "Student/Parent dashboard contains attendance + homework and a printable ID card view (print-friendly CSS)",
+        "Teacher dashboard provides class list + attendance + homework creation tools",
+        "Chairperson dashboard provides overview + fees summary + users list view screens",
+        "Non-Teaching Staff dashboard is view-only (no restricted mutation controls) and shows assigned notices",
+        "UI navigation does not show links/actions the role cannot use"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Implement an app-wide Undo system for major actions (profile changes, attendance edits, homework edits, fee edits). Undo must restore the previous saved state and must be consistent across UI sections.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Must include Undo system for major actions",
+          "Profile changes must support Undo",
+          "Attendance edits must support Undo",
+          "Homework edits must support Undo",
+          "Fee edits must support Undo"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Each supported domain (profile/attendance/homework/fees) provides an Undo control after a change",
+        "Undo restores the immediately previous persisted state for that entity",
+        "Undo operations are permission-checked server-side like any other mutation",
+        "Undo behavior is consistent (same interaction pattern) across all screens"
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "text": "Implement backend storage and APIs aligned to the requested logical collections: users, attendance, homework, fees, messages. Provide query methods needed to power each dashboard and mutation methods needed for each role’s permitted actions. Ensure the backend supports many users simultaneously within the single-actor design.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Example backend structure:\n\nusers/\nattendance/\nhomework/\nfees/\nmessages/",
+          "Must support many users simultaneously",
+          "Must use role-based access control"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend exposes typed methods to create/read/update the required entities (users, attendance, homework, fees, messages)",
+        "Backend queries are scoped by caller role (e.g., student sees only their class data; chairperson sees all)",
+        "Backend methods include stable identifiers for entities and support listing/filtering needed by dashboards"
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "Enforce online-only syncing behavior: the app may open offline, but features that require syncing (messaging, attendance, homework, fees) must clearly indicate lack of connectivity and prevent sync actions while offline. When connectivity returns, the app should resume automatic refresh.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Messaging, attendance, homework, and fee updates require internet\nApp may open offline but cannot sync offline"
+        ]
+      },
+      "acceptanceCriteria": [
+        "When browser is offline, sync-dependent actions are disabled and show an explanatory message",
+        "Viewing previously loaded data is allowed where applicable, but write/sync operations are blocked while offline",
+        "When returning online, the app resumes automatic refresh for messages/homework/attendance/fees"
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "text": "Apply a coherent, school-friendly visual theme (colors, typography, spacing, component styling) consistently across all pages and dashboards. Avoid blue & purple as primary brand colors.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Interface must be simple, clear, and school-friendly"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All screens share a consistent visual design system (typography, spacing, buttons, cards, tables)",
+        "Primary palette is not blue/purple",
+        "UI remains simple, readable, and appropriate for school administration use"
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "text": "Add generated static image assets for IEMS branding and use them in the UI (e.g., app header/login screens) by serving them from frontend/public/assets/generated (do not serve generated images via the backend).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Create a fully functional online school management web application named IEMS."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Generated images exist under frontend/public/assets/generated with the exact filenames specified in imageRequirements.required",
+        "Frontend imports/uses those images as static assets (no backend image routing)"
+      ]
+    }
+  ],
+  "constraints": [
+    "Backend must be implemented as a single Motoko actor in backend/main.mo (no additional backend services).",
+    "Do not edit files under frontend/src/components/ui or other immutable paths listed in SYSTEM_CONTEXT; compose them instead.",
+    "User-facing text must be in English.",
+    "No third-party authentication providers are allowed; only platform-supported auth can be used.",
+    "No WebSockets/Socket.io; “real-time syncing” must be achieved using supported patterns (e.g., periodic refetch/polling) within the app.",
+    "No external databases; all persistence must be in-canister state."
+  ],
+  "nonGoals": [
+    "Android/iOS native apps.",
+    "Email/password authentication or any email-based flows.",
+    "GPS/maps/geolocation features.",
+    "Push notifications, SMS delivery integration, or third-party messaging services."
+  ],
+  "imageRequirements": {
+    "required": [
+      "School crest-style logo with book and laurel, flat vector look, warm green + charcoal palette (iems-logo.dim_512x512.png)",
+      "Soft abstract school-themed header background with subtle stationery shapes, light paper texture (iems-header-bg.dim_1600x400.png)",
+      "Simple monochrome icon set (attendance checkmark, homework notebook, fees receipt, announcement megaphone) in a consistent line style (iems-icons.dim_256x256.png)"
+    ],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

@@ -1,0 +1,421 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "IEMS school management app (frontend): role selection, OTP-style login, dashboards, syncing, undo, and theming",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Add opening role-selection screen with exactly three role options and route to phone + OTP login after selection.",
+      "acceptanceCriteria": [
+        "App first-load lands on a role selection view with only the three specified buttons",
+        "Clicking any role takes the user to a phone + OTP login view",
+        "No Chairperson option is present on the role selection screen"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "create",
+          "description": "Create the app router and set the first-load route to a RoleSelection page; wire navigation from role selection to the phone + OTP login page for the chosen role."
+        },
+        {
+          "path": "frontend/src/pages/RoleSelection.tsx",
+          "operation": "create",
+          "description": "Implement role selection UI with exactly three buttons (“Student / Parent”, “Teacher”, “Non-Teaching Staff”) and route to phone + OTP login with the selected role context. Use shadcn-ui components (e.g., Button/Card) for consistent layout and styling; verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Implement phone number + OTP-only UI flow for all roles, add a dedicated Chairperson login path, and require profile completion on first successful login; no email flows anywhere.",
+      "acceptanceCriteria": [
+        "UI contains no email login fields or email-based flows",
+        "User can authenticate using phone + OTP flow and is associated with that phone number going forward",
+        "First-time login forces a profile completion step (name + address/location) before dashboard access",
+        "Chairperson can access a dedicated “Chairperson login” path using phone + OTP without selecting a role on the opening screen"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/PhoneOtpLogin.tsx",
+          "operation": "create",
+          "description": "Create the phone + OTP login screen (no email fields) that supports Student/Parent, Teacher, and Non-Teaching Staff; store verified phone + intended role locally for subsequent profile completion and dashboard routing. Use shadcn-ui form primitives (Input/Label/Button/Card) for the UI; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/ChairpersonLogin.tsx",
+          "operation": "create",
+          "description": "Create a dedicated Chairperson phone + OTP login page accessible directly via route (not from role selection). Use shadcn-ui components for consistent UI; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/ProfileCompletion.tsx",
+          "operation": "create",
+          "description": "Create the first-login profile completion screen requiring name + address/location (and showing the phone and role from the login step) before allowing dashboard access. Use shadcn-ui components (Input/Label/Button/Card) and show clear English validation messages; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire routes for /login (role-based), /chairperson-login (direct), and /profile-completion; add guard logic so first-time users are redirected to profile completion before any dashboard route is accessible."
+        },
+        {
+          "path": "frontend/src/components/AuthGate.tsx",
+          "operation": "create",
+          "description": "Create a small auth/flow gate component to centralize: (1) logged-in/verified phone presence, (2) first-time profile completion enforcement, and (3) routing to the correct dashboard. Keep it free of any email-based options."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Provide profile screen UI for name/phone/address linked to the logged-in user and add Undo for the most recent profile change.",
+      "acceptanceCriteria": [
+        "Profile screen shows name, phone number, and address/location for the current user after first login completion",
+        "User can edit only their own profile fields (enforced by backend)",
+        "Undo control reverts the most recent profile edit to the previous saved state",
+        "Profile data is keyed/linked to the user’s phone number in backend storage"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Profile.tsx",
+          "operation": "create",
+          "description": "Create a Profile page that fetches and displays the current user profile (name/phone/address), allows editing for the current user only, and shows authorization errors gracefully. Use shadcn-ui (Card/Input/Button/Alert) for form layout; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useProfile.ts",
+          "operation": "create",
+          "description": "Add React Query hooks to load/update the current profile via the backend actor (getCallerUserProfile/saveCallerUserProfile/updateProfile) and to support undoProfile; expose helper state for first-time profile detection."
+        },
+        {
+          "path": "frontend/src/components/UndoToast.tsx",
+          "operation": "create",
+          "description": "Create a reusable Undo UI pattern (toast/banner) that appears after a profile save and triggers the appropriate undo action, then refetches the affected queries. Use shadcn-ui (Toast/Alert/Dialog as available) for consistent UX; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Register the Profile route and ensure navigation only shows Profile access after login/profile completion."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Implement attendance viewing/marking UI by role with teacher/class constraints reflected in the UI and Undo for attendance edits.",
+      "acceptanceCriteria": [
+        "Teacher dashboard shows only classes assigned to that teacher",
+        "Attendance marking UI is available only for the form teacher of the selected class",
+        "Attendance records are stored/retrieved by (classId, date)",
+        "Undo action reverts the last attendance edit to the previous saved state",
+        "Unauthorized attendance writes are rejected by backend"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/attendance/AttendanceTeacher.tsx",
+          "operation": "create",
+          "description": "Create teacher attendance UI that lists only assigned classes, allows marking attendance only when the user is the form teacher for the selected class, and supports Undo after marking. Use shadcn-ui Table/Buttons/Cards to structure the marking workflow; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/attendance/AttendanceStudentParent.tsx",
+          "operation": "create",
+          "description": "Create student/parent attendance view UI (read-only) that shows attendance for the associated class/student context. Use shadcn-ui components for consistent display; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useAttendance.ts",
+          "operation": "create",
+          "description": "Add React Query hooks for reading attendance and performing markAttendance + undoAttendance operations; integrate consistent Undo behavior and refetching."
+        },
+        {
+          "path": "frontend/src/pages/DashboardTeacher.tsx",
+          "operation": "create",
+          "description": "Create the teacher dashboard shell that links to attendance tools and shows assigned classes (UI-level filtering). Use shadcn-ui layout components; verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Implement homework creation for teachers, homework viewing for students/parents, automatic refresh polling, and Undo for homework edits.",
+      "acceptanceCriteria": [
+        "Teacher can create homework targeted to a specific class they are assigned to",
+        "Student/Parent dashboard displays homework items for the associated class",
+        "Homework list auto-refreshes without manual reload (e.g., polling/periodic refetch) so new items appear shortly after creation",
+        "Undo control reverts the most recent homework edit to its previous saved state",
+        "Backend prevents teachers from sending homework to unassigned classes"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/homework/HomeworkTeacher.tsx",
+          "operation": "create",
+          "description": "Create teacher homework UI to add/update/delete homework for an assigned class, and show an Undo action for the last edit. Use shadcn-ui form components and tables for listing; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/homework/HomeworkStudentParent.tsx",
+          "operation": "create",
+          "description": "Create student/parent homework list UI and integrate automatic refresh (polling) to reflect new homework shortly after creation. Use shadcn-ui components for list rendering; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useHomework.ts",
+          "operation": "create",
+          "description": "Add React Query hooks for getHomework/addHomework/deleteHomework/undoHomework with configurable refetchInterval when online, and consistent Undo UX integration."
+        },
+        {
+          "path": "frontend/src/hooks/useAutoRefreshPolicy.ts",
+          "operation": "create",
+          "description": "Centralize the polling/periodic refetch policy used by homework/messages/fees/attendance (e.g., returning refetchInterval based on online state and screen visibility) to meet the 'instant' sync requirement without WebSockets."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Implement fees UI with pending/paid/advance display, chairperson-only final approval controls in the UI, show school/chairperson contact info, and Undo for fee edits.",
+      "acceptanceCriteria": [
+        "Fees records can represent pending/paid/advance states and amounts",
+        "Non-chairperson users cannot perform final fee approval actions (backend-enforced)",
+        "Fees UI shows school contact and chairperson contact information",
+        "Undo reverts the latest fee edit/adjustment to the prior saved state"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/fees/Fees.tsx",
+          "operation": "create",
+          "description": "Create the fees screen that displays fee state (pending/paid/advance) and amounts, shows school + chairperson contact info, and conditionally renders final approval/edit controls only for chairperson UI context. Use shadcn-ui components (Card/Badge/Table/Button) for clarity; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useFees.ts",
+          "operation": "create",
+          "description": "Add React Query hooks for getFees/updateFee/undoFee with consistent Undo handling and automatic refresh policy integration."
+        },
+        {
+          "path": "frontend/src/pages/DashboardChairperson.tsx",
+          "operation": "create",
+          "description": "Create a chairperson dashboard section that includes fees summary navigation and renders relevant fee KPIs from queries. Use shadcn-ui cards/tables; verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Implement messaging/announcements with a notification panel, role-appropriate composer UI, and automatic refresh syncing across sessions.",
+      "acceptanceCriteria": [
+        "Chairperson can create an announcement addressed to: all users or selected role/groups",
+        "Teachers can send notices/homework alerts scoped to their class(es)",
+        "All roles have a notification panel listing relevant messages",
+        "Notification panel auto-refreshes without manual reload so new messages appear shortly after creation",
+        "Backend enforces sender permissions and audience scoping rules"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/NotificationPanel.tsx",
+          "operation": "create",
+          "description": "Create an app-wide notification panel component that lists messages relevant to the current user context, supports automatic refresh, and presents sender/audience metadata. Use shadcn-ui (Sheet/Popover/Tabs/List primitives) to implement the panel UI; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/messages/MessageComposer.tsx",
+          "operation": "create",
+          "description": "Create a message/announcement composer UI that conditionally supports chairperson broadcasting (all or selected groups) and teacher notices scoped to their class(es). Use shadcn-ui form components and selects; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useMessages.ts",
+          "operation": "create",
+          "description": "Add React Query hooks for getMessages/sendMessage with refetchInterval-based auto-refresh when online, plus graceful handling of authorization failures."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire the NotificationPanel into the main authenticated layout so all roles can access it, and add route(s) to reach the message composer where appropriate for the role."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Create role-specific dashboards and navigation that only exposes allowed sections for the logged-in role, including printable student ID card.",
+      "acceptanceCriteria": [
+        "Upon login, user lands on a dashboard appropriate to their role",
+        "Student/Parent dashboard contains attendance + homework and a printable ID card view (print-friendly CSS)",
+        "Teacher dashboard provides class list + attendance + homework creation tools",
+        "Chairperson dashboard provides overview + fees summary + users list view screens",
+        "Non-Teaching Staff dashboard is view-only (no restricted mutation controls) and shows assigned notices",
+        "UI navigation does not show links/actions the role cannot use"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/DashboardStudentParent.tsx",
+          "operation": "create",
+          "description": "Create Student/Parent dashboard that includes attendance view, homework list, and a printable student ID card section. Use shadcn-ui (Card/Tabs/Button) for layout; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/DashboardNonTeaching.tsx",
+          "operation": "create",
+          "description": "Create Non-Teaching Staff dashboard that is mostly view-only and surfaces assigned notices/messages; ensure mutation controls (attendance marking/homework/fees approvals) are not shown. Use shadcn-ui components for consistent layout; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/chairperson/UsersList.tsx",
+          "operation": "create",
+          "description": "Create chairperson users list view (read-only in UI for profile editing) that displays all users. Use shadcn-ui Table components; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/AppLayout.tsx",
+          "operation": "create",
+          "description": "Create a shared authenticated layout with role-aware navigation (show/hide links and actions per role) and a consistent header area where branding assets can be displayed. Use shadcn-ui navigation primitives/buttons; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/RoleGuard.tsx",
+          "operation": "create",
+          "description": "Implement a role-aware route guard wrapper that blocks navigation to disallowed dashboard sections and renders a clear English access-denied UI when necessary."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Register routes for role dashboards and key sections (attendance/homework/fees/users list/messages) and ensure post-login landing redirects to the correct dashboard based on the logged-in role."
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Implement an app-wide, consistent Undo interaction pattern for profile, attendance, homework, and fees changes (frontend integration).",
+      "acceptanceCriteria": [
+        "Each supported domain (profile/attendance/homework/fees) provides an Undo control after a change",
+        "Undo restores the immediately previous persisted state for that entity",
+        "Undo operations are permission-checked server-side like any other mutation",
+        "Undo behavior is consistent (same interaction pattern) across all screens"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/UndoManager.tsx",
+          "operation": "create",
+          "description": "Create a small centralized Undo manager/context that standardizes: when an Undo is offered, how long it is shown, how errors are displayed, and which domain-specific undo function is called."
+        },
+        {
+          "path": "frontend/src/components/UndoToast.tsx",
+          "operation": "modify",
+          "description": "Extend the reusable Undo UI component so it can be triggered from profile/attendance/homework/fees flows via the Undo manager, keeping identical interaction semantics across screens. Use shadcn-ui toast/alert primitives as available; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useAttendance.ts",
+          "operation": "modify",
+          "description": "Integrate the shared Undo manager pattern into attendance mutations so the most recent persisted change can be undone consistently."
+        },
+        {
+          "path": "frontend/src/hooks/useHomework.ts",
+          "operation": "modify",
+          "description": "Integrate the shared Undo manager pattern into homework mutations and refetch behavior after undo."
+        },
+        {
+          "path": "frontend/src/hooks/useFees.ts",
+          "operation": "modify",
+          "description": "Integrate the shared Undo manager pattern into fee mutations and refetch behavior after undo."
+        },
+        {
+          "path": "frontend/src/hooks/useProfile.ts",
+          "operation": "modify",
+          "description": "Integrate the shared Undo manager pattern into profile update flows so the last persisted profile state can be restored."
+        }
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "summary": "Enforce online-only syncing behavior with offline indicators and disabled sync-dependent actions; resume polling when back online.",
+      "acceptanceCriteria": [
+        "When browser is offline, sync-dependent actions are disabled and show an explanatory message",
+        "Viewing previously loaded data is allowed where applicable, but write/sync operations are blocked while offline",
+        "When returning online, the app resumes automatic refresh for messages/homework/attendance/fees"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useOnlineStatus.ts",
+          "operation": "create",
+          "description": "Create a hook that tracks browser online/offline state and exposes a simple API for screens to disable sync-dependent actions and to show an explanatory message."
+        },
+        {
+          "path": "frontend/src/components/OfflineBanner.tsx",
+          "operation": "create",
+          "description": "Create a clear English offline banner component used across screens to indicate lack of connectivity and that syncing actions are disabled. Use shadcn-ui Alert components for consistent styling; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useAutoRefreshPolicy.ts",
+          "operation": "modify",
+          "description": "Update the auto-refresh policy hook so periodic refetching is disabled while offline and resumes automatically when online."
+        },
+        {
+          "path": "frontend/src/pages/homework/HomeworkTeacher.tsx",
+          "operation": "modify",
+          "description": "Disable homework create/edit/delete actions while offline and display an explanatory message; allow viewing cached/previously loaded homework where applicable. Use shadcn-ui disabled states/alerts; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/attendance/AttendanceTeacher.tsx",
+          "operation": "modify",
+          "description": "Disable attendance marking while offline and show an explanatory message; allow viewing previously loaded attendance when applicable. Use shadcn-ui disabled states/alerts; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/fees/Fees.tsx",
+          "operation": "modify",
+          "description": "Disable fee update/approval actions while offline and show an explanatory message; allow viewing previously loaded fee data. Use shadcn-ui disabled states/alerts; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/NotificationPanel.tsx",
+          "operation": "modify",
+          "description": "Ensure message refresh and message sending UI clearly indicates offline state and prevents sending while offline; resume auto-refresh when back online. Use shadcn-ui disabled states/alerts; verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "summary": "Apply a consistent school-friendly visual theme across the app, avoiding blue/purple as primary colors.",
+      "acceptanceCriteria": [
+        "All screens share a consistent visual design system (typography, spacing, buttons, cards, tables)",
+        "Primary palette is not blue/purple",
+        "UI remains simple, readable, and appropriate for school administration use"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "create",
+          "description": "Create global styling with a school-friendly theme using warm green + charcoal as primary/foreground, consistent typography/spacing, and shared component styling via Tailwind/shadcn CSS variables (avoid blue/purple as primary). Include print-friendly rules used by the student ID card view."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Adjust theme tokens (via CSS variables usage and/or extended palette) to ensure the primary brand styling aligns to non-blue/purple colors and remains consistent across UI elements."
+        },
+        {
+          "path": "frontend/src/components/AppLayout.tsx",
+          "operation": "modify",
+          "description": "Ensure the shared layout applies consistent spacing, header styling, and section card patterns across dashboards. Use shadcn-ui layout primitives; verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "Add required generated branding images as static frontend assets and use them in the UI (no backend image routing).",
+      "acceptanceCriteria": [
+        "Generated images exist under frontend/public/assets/generated with the exact filenames specified in imageRequirements.required",
+        "Frontend imports/uses those images as static assets (no backend image routing)"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/public/assets/generated/iems-logo.dim_512x512.png",
+          "operation": "create",
+          "description": "Add the generated image asset at the exact required path and filename so it can be used by the UI."
+        },
+        {
+          "path": "frontend/public/assets/generated/iems-header-bg.dim_1600x400.png",
+          "operation": "create",
+          "description": "Add the generated image asset at the exact required path and filename so it can be used by the UI."
+        },
+        {
+          "path": "frontend/public/assets/generated/iems-icons.dim_256x256.png",
+          "operation": "create",
+          "description": "Add the generated image asset at the exact required path and filename so it can be used by the UI."
+        },
+        {
+          "path": "frontend/src/components/AppLayout.tsx",
+          "operation": "modify",
+          "description": "Wire the branding assets into the header and/or login-related screens by referencing the static assets at frontend/public/assets/generated/iems-logo.dim_512x512.png and frontend/public/assets/generated/iems-header-bg.dim_1600x400.png. Use shadcn-ui components for layout; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/RoleSelection.tsx",
+          "operation": "modify",
+          "description": "Update the role selection screen to display IEMS branding using frontend/public/assets/generated/iems-logo.dim_512x512.png and optionally the header background frontend/public/assets/generated/iems-header-bg.dim_1600x400.png. Use shadcn-ui components for composition; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/DashboardStudentParent.tsx",
+          "operation": "modify",
+          "description": "Use the icon set frontend/public/assets/generated/iems-icons.dim_256x256.png within dashboard sections (attendance/homework/fees/announcements cues) to reinforce consistent branding. Use shadcn-ui components for layout; verify the component's usage instructions before implementing."
+        }
+      ]
+    }
+  ]
+}
