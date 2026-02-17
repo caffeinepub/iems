@@ -1,5 +1,5 @@
 {
-  "frontend/src/App.tsx": "Main application component with TanStack Router setup, authentication gate, and all route definitions for role selection, login flows, profile completion, and role-specific dashboards.",
+  "frontend/src/App.tsx": "Main application component with TanStack Router setup, authentication gate, all route definitions, and service worker registration for PWA functionality.",
   "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend operations including profile management, attendance, homework, fees, and messaging with automatic refetching and undo support.",
   "frontend/src/hooks/useOnlineStatus.ts": "Custom hook that tracks browser online/offline status using native browser events.",
   "frontend/src/pages/RoleSelection.tsx": "Opening screen with three role selection buttons (Student/Parent, Teacher, Non-Teaching Staff) and link to Chairperson login.",
@@ -11,8 +11,14 @@
   "frontend/src/pages/DashboardTeacher.tsx": "Teacher dashboard with class management, attendance marking tools, and homework creation interface.",
   "frontend/src/pages/DashboardChairperson.tsx": "Chairperson dashboard with school overview statistics, all users list, and contact information.",
   "frontend/src/pages/DashboardNonTeaching.tsx": "Non-Teaching Staff view-only dashboard displaying notices and announcements.",
-  "frontend/src/components/AppLayout.tsx": "Shared authenticated layout with header, navigation, notification panel toggle, and footer with branding.",
+  "frontend/src/components/AppLayout.tsx": "Shared authenticated layout with header (including header background image), AppInfoDialog trigger, navigation, notification panel toggle, and footer with branding.",
   "frontend/src/components/NotificationPanel.tsx": "Sliding notification panel showing messages and announcements with auto-refresh support.",
   "frontend/src/index.css": "Global styles with school-friendly warm green color palette using OKLCH color system and print-friendly CSS for student ID cards.",
-  "frontend/tailwind.config.js": "Tailwind configuration with custom color tokens and design system settings."
+  "frontend/tailwind.config.js": "Tailwind configuration with custom color tokens and design system settings.",
+  "frontend/index.html": "HTML entry point with PWA meta tags, manifest link, theme color, and app icon references for installability.",
+  "frontend/public/manifest.webmanifest": "Web app manifest defining IEMS as a standalone PWA with app icons, theme colors, and display settings.",
+  "frontend/public/sw.js": "Service worker that caches app shell assets and provides offline fallback for navigation requests.",
+  "frontend/public/offline.html": "Minimal offline fallback page shown when the app is accessed without network connectivity.",
+  "frontend/src/hooks/usePwaInstallPrompt.ts": "Custom hook that detects PWA install prompt availability, tracks installed state, and exposes install action.",
+  "frontend/src/components/AppInfoDialog.tsx": "Dialog component displaying app URL with copy action, install instructions, and platform-specific guidance for adding IEMS to home screen."
 }

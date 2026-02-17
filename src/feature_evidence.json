@@ -2,11 +2,14 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-create-an-opening-role-selection-screen-for-iems-with-exactly-three-options-student-parent-teacher-and-non-teaching-staff-after-selecting-a-role-route-the-user-to-a-phone-number-otp-login-screen-do-not-show-chairperson-on-the-role-selection-screen",
-      "featureTitle": "Create an opening role-selection screen for IEMS with exactly three options: “Student / Parent”, “Teacher”, and “Non-Teaching Staff”. After selecting a role, route the user to a phone number + OTP login screen. Do not show “Chairperson” on the role-selection screen.",
+      "featureId": "feature-add-progressive-web-app-pwa-support-so-iems-can-be-installed-to-a-phone-home-screen-no-apk-including-a-web-app-manifest-required-icons-and-basic-offline-fallback-for-the-app-shell",
+      "featureTitle": "Add Progressive Web App (PWA) support so IEMS can be installed to a phone home screen (no APK), including a web app manifest, required icons, and basic offline fallback for the app shell.",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/pages/RoleSelection.tsx"
+        "frontend/index.html",
+        "frontend/public/manifest.webmanifest",
+        "frontend/public/offline.html",
+        "frontend/public/sw.js",
+        "frontend/src/App.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -22,13 +25,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-phone-number-otp-only-authentication-flows-for-all-roles-including-a-direct-phone-otp-login-path-for-chairperson-not-via-role-selection-ensure-there-is-no-email-login-anywhere-accounts-must-be-permanently-linked-to-phone-numbers-on-first-successful-login-require-profile-completion-before-allowing-access-to-dashboards",
-      "featureTitle": "Implement phone number + OTP-only authentication flows for all roles, including a direct phone+OTP login path for Chairperson (not via role selection). Ensure there is no email login anywhere. Accounts must be permanently linked to phone numbers. On first successful login, require profile completion before allowing access to dashboards.",
+      "featureId": "feature-add-a-user-visible-way-to-retrieve-and-share-the-deployed-app-url-from-inside-the-ui-e-g-in-a-header-footer-app-info-area-with-a-copy-to-clipboard-button",
+      "featureTitle": "Add a user-visible way to retrieve and share the deployed app URL from inside the UI (e.g., in a header/footer “App info” area with a copy-to-clipboard button).",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/pages/ChairpersonLogin.tsx",
-        "frontend/src/pages/PhoneOtpLogin.tsx",
-        "frontend/src/pages/ProfileCompletion.tsx"
+        "frontend/src/components/AppInfoDialog.tsx",
+        "frontend/src/components/AppLayout.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -44,91 +45,12 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-profile-data-model-and-ui-for-name-phone-number-and-address-or-location-profile-becomes-visible-after-first-login-post-completion-store-and-retrieve-profile-data-linked-to-the-authenticated-phone-number-add-an-undo-capability-for-profile-changes",
-      "featureTitle": "Implement profile data model and UI for Name, Phone number, and Address or location. Profile becomes visible after first login (post-completion). Store and retrieve profile data linked to the authenticated phone number. Add an Undo capability for profile changes.",
+      "featureId": "feature-add-an-install-help-panel-english-text-explaining-that-iems-is-a-web-app-no-apk-and-providing-short-device-appropriate-instructions-for-installing-to-the-home-screen-when-installation-is-available-otherwise-explaining-how-to-add-a-home-screen-shortcut-manually",
+      "featureTitle": "Add an install help panel (English text) explaining that IEMS is a web app (no APK) and providing short device-appropriate instructions for installing to the home screen when installation is available, otherwise explaining how to add a home-screen shortcut manually.",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/pages/Profile.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-4"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-teacher-class-assignment-data-needed-to-enforce-only-the-form-teacher-can-mark-attendance-and-teachers-can-mark-attendance-only-for-their-assigned-class-store-attendance-by-class-and-date-provide-attendance-marking-and-viewing-ui-per-role-and-add-undo-support-for-attendance-edits",
-      "featureTitle": "Implement teacher/class assignment data needed to enforce: only the form teacher can mark attendance, and teachers can mark attendance only for their assigned class. Store attendance by class and date. Provide attendance marking and viewing UI per role, and add Undo support for attendance edits.",
-      "files": [
-        "frontend/src/pages/DashboardTeacher.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-5"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-fees-management-track-pending-paid-and-advance-fees-only-chairperson-can-approve-final-fee-changes-display-school-contact-and-chairperson-contact-in-the-fees-area-add-undo-support-for-fee-edits",
-      "featureTitle": "Implement fees management: track pending, paid, and advance fees. Only Chairperson can approve final fee changes. Display school contact and chairperson contact in the fees area. Add Undo support for fee edits.",
-      "files": [
-        "frontend/src/pages/DashboardChairperson.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-7"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-messaging-announcements-with-a-notification-panel-chairperson-can-broadcast-announcements-to-all-users-or-selected-groups-teachers-can-send-notices-homework-alerts-to-students-messages-must-sync-instantly-via-automatic-refresh-across-sessions",
-      "featureTitle": "Implement messaging & announcements with a notification panel: Chairperson can broadcast announcements to all users or selected groups; teachers can send notices/homework alerts to students. Messages must sync “instantly” via automatic refresh across sessions.",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/NotificationPanel.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-8"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-create-role-specific-dashboards-student-parent-attendance-view-homework-list-printable-student-id-card-teacher-assigned-classes-list-attendance-marking-tools-homework-sending-tools-chairperson-full-school-overview-dashboard-fees-summary-all-users-list-non-teaching-staff-mostly-view-only-dashboard-and-assigned-notices-ensure-navigation-only-exposes-allowed-sections-for-the-logged-in-role",
-      "featureTitle": "Create role-specific dashboards:\n- Student/Parent: attendance view, homework list, printable student ID card\n- Teacher: assigned classes list, attendance marking tools, homework sending tools\n- Chairperson: full school overview dashboard, fees summary, all users list\n- Non-Teaching Staff: mostly view-only dashboard and assigned notices\nEnsure navigation only exposes allowed sections for the logged-in role.",
-      "files": [
-        "frontend/src/App.tsx",
+        "frontend/src/components/AppInfoDialog.tsx",
         "frontend/src/components/AppLayout.tsx",
-        "frontend/src/pages/DashboardNonTeaching.tsx",
-        "frontend/src/pages/DashboardStudentParent.tsx"
+        "frontend/src/hooks/usePwaInstallPrompt.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -139,69 +61,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-9"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-enforce-online-only-syncing-behavior-the-app-may-open-offline-but-features-that-require-syncing-messaging-attendance-homework-fees-must-clearly-indicate-lack-of-connectivity-and-prevent-sync-actions-while-offline-when-connectivity-returns-the-app-should-resume-automatic-refresh",
-      "featureTitle": "Enforce online-only syncing behavior: the app may open offline, but features that require syncing (messaging, attendance, homework, fees) must clearly indicate lack of connectivity and prevent sync actions while offline. When connectivity returns, the app should resume automatic refresh.",
-      "files": [
-        "frontend/src/components/NotificationPanel.tsx",
-        "frontend/src/hooks/useOnlineStatus.ts"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-12"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-apply-a-coherent-school-friendly-visual-theme-colors-typography-spacing-component-styling-consistently-across-all-pages-and-dashboards-avoid-blue-purple-as-primary-brand-colors",
-      "featureTitle": "Apply a coherent, school-friendly visual theme (colors, typography, spacing, component styling) consistently across all pages and dashboards. Avoid blue & purple as primary brand colors.",
-      "files": [
-        "frontend/src/components/AppLayout.tsx",
-        "frontend/src/index.css",
-        "frontend/tailwind.config.js"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-13"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-generated-static-image-assets-for-iems-branding-and-use-them-in-the-ui-e-g-app-header-login-screens-by-serving-them-from-frontend-public-assets-generated-do-not-serve-generated-images-via-the-backend",
-      "featureTitle": "Add generated static image assets for IEMS branding and use them in the UI (e.g., app header/login screens) by serving them from frontend/public/assets/generated (do not serve generated images via the backend).",
-      "files": [
-        "frontend/src/components/AppLayout.tsx",
-        "frontend/src/pages/DashboardStudentParent.tsx",
-        "frontend/src/pages/RoleSelection.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-14"
+        "REQ-3"
       ],
       "confidence": "high"
     }

@@ -1,161 +1,32 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-16T14:12:29.801Z",
-  "summary": "The diff adds a single-actor Motoko backend plus a React frontend with role selection, login pages, profile completion, dashboards, and a notification panel. However, several core requirements are either not implemented or are implemented with a different auth model than requested (Internet Identity instead of phone+OTP), and multiple domain requirements (attendance-by-date, teacher/class enforcement, messaging creation/broadcast, fees approval/contacts, consistent undo system, and auto-refresh/polling) are not evidenced in the shown changes.",
+  "generatedAt": "2026-02-17T13:55:46.332Z",
+  "summary": "Diff adds core PWA assets (manifest, service worker, offline fallback page) and introduces an in-app AppInfo dialog in the main layout to show/copy the app URL and guide installation. However, the URL being copied/displayed appears to be only the origin (not the full current URL), and the required image assets themselves are not shown as added in the diff summary. There is also a notifications panel/toggle added to the layout that is not part of the BuildRequest.",
   "missing_requirements": [
     {
       "id": "REQ-2",
-      "requirement": "Implement phone number + OTP-only authentication flows for all roles (including Chairperson) with accounts permanently linked to phone numbers; no email login; first login forces profile completion before dashboard access.",
-      "reason": "Frontend login flows use Internet Identity (\"Continue with Internet Identity\") rather than any OTP UI/flow; no OTP entry/verification is shown. Backend-side OTP handling is not evidenced.",
+      "requirement": "UI shows the current app URL (derived from window.location) in a readable, copyable form, and “Copy link” copies the full URL.",
+      "reason": "AppInfoDialog uses window.location.origin, which omits the path/query/hash and therefore does not represent the full current URL.",
       "evidence": [
-        "frontend/src/pages/PhoneOtpLogin.tsx",
-        "frontend/src/pages/ChairpersonLogin.tsx",
-        "frontend/src/hooks/useInternetIdentity.ts"
+        "frontend/src/components/AppInfoDialog.tsx"
       ]
     },
     {
-      "id": "REQ-3",
-      "requirement": "RBAC for Student, Teacher, Non-Teaching Staff, Chairperson with server-side authorization checks for every restricted mutation/query; Chairperson read-all but cannot edit user profiles; users can only edit their own profile.",
-      "reason": "Although helper functions like isChairperson/isTeacher exist, the backend authorization enforcement and the specific rule \"Chairperson cannot edit user profiles\" are not evidenced in the truncated backend; frontend also calls mutations like updateProfile/undoProfile without showing role gating.",
+      "requirement": "Provide the required image assets (logo, header background, icon set, and app icons) as files in the project.",
+      "reason": "The diff references image paths under /assets/generated/... in the manifest, service worker cache list, and layout header, but the diff summary does not show any of these image files being added/modified.",
       "evidence": [
-        "backend/main.mo",
-        "frontend/src/hooks/useQueries.ts"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "requirement": "Profile model/UI for name, phone, address/location linked to authenticated phone number; add Undo for profile changes.",
-      "reason": "UI includes profile edit and an undo call, but the toast 'Undo' actions are placeholders and do not actually invoke undo; additionally the authentication linkage is via Internet Identity principal with sessionStorage phone, not an OTP-authenticated phone linkage as specified.",
-      "evidence": [
-        "frontend/src/pages/Profile.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/ProfileCompletion.tsx",
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "requirement": "Teacher/class assignment enforcement: only form teacher can mark attendance and only for assigned class; store attendance by (classId, date); UI per role; Undo for attendance edits; backend rejects unauthorized writes.",
-      "reason": "Frontend uses a hardcoded/mock classId ('class-1') and attendance query/mutation signatures shown do not include a date parameter. No evidence of form-teacher-only UI gating or undo behavior beyond placeholder toasts; backend enforcement not evidenced due to truncation.",
-      "evidence": [
-        "frontend/src/pages/DashboardTeacher.tsx",
-        "frontend/src/pages/DashboardStudentParent.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "requirement": "Homework: teachers create/send to assigned class; students/parents view; auto-refresh/polling; Undo for homework edits; backend prevents teachers sending to unassigned classes.",
-      "reason": "Teacher dashboard uses a mock classId and there is no evidence of assignment checks. Auto-refresh/polling is not evidenced (no refetchInterval shown). Undo is indicated only as a placeholder in toast actions.",
-      "evidence": [
-        "frontend/src/pages/DashboardTeacher.tsx",
-        "frontend/src/pages/DashboardStudentParent.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "requirement": "Fees management with pending/paid/advance; only Chairperson can approve final fee changes (backend-enforced); show school contact + chairperson contact in fees area; Undo for fee edits.",
-      "reason": "Student/Parent dashboard references fees, but the provided diff snippet does not show fees UI including required contact information nor any chairperson approval workflow or undo for fees; backend enforcement is not evidenced.",
-      "evidence": [
-        "frontend/src/pages/DashboardStudentParent.tsx",
-        "frontend/src/pages/DashboardChairperson.tsx",
-        "backend/main.mo",
-        "frontend/src/hooks/useQueries.ts"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "requirement": "Messaging & announcements: Chairperson broadcast to all or selected groups; teachers send notices/homework alerts to their class(es); notification panel for all; auto-refresh; backend enforces permissions and scoping.",
-      "reason": "A notification panel exists for viewing messages, but no UI for Chairperson/Teacher to create/send messages is evidenced. Auto-refresh/polling is not evidenced. Backend scoping/permission enforcement is not evidenced in truncated backend.",
-      "evidence": [
-        "frontend/src/components/NotificationPanel.tsx",
+        "frontend/public/manifest.webmanifest",
+        "frontend/public/sw.js",
         "frontend/src/components/AppLayout.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "requirement": "Role-specific dashboards with required sections (Student/Parent: attendance, homework, printable ID card; Teacher: assigned classes, attendance tools, homework tools; Chairperson: overview, fees summary, all users list; Non-Teaching: view-only + notices) and navigation only exposing allowed sections.",
-      "reason": "Student/Parent includes print CSS and a print button, but it is not evidenced that there is an actual printable ID card view (only a generic window.print). Teacher 'My Classes' is hardcoded (not from assignments). Chairperson dashboard shows stats and users list, but no fees summary is evidenced. Role-based navigation hiding is not evidenced (AppLayout always shows notifications/profile/logout; no role-based nav shown).",
-      "evidence": [
-        "frontend/src/pages/DashboardStudentParent.tsx",
-        "frontend/src/pages/DashboardTeacher.tsx",
-        "frontend/src/pages/DashboardChairperson.tsx",
-        "frontend/src/pages/DashboardNonTeaching.tsx",
-        "frontend/src/components/AppLayout.tsx",
-        "frontend/src/index.css"
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "requirement": "App-wide Undo system for profile/attendance/homework/fees that restores previous persisted state and is permission-checked server-side; consistent interaction pattern across screens.",
-      "reason": "Undo is only partially represented: profile page has an explicit Undo button calling undoProfile, while other domains show only placeholder toast actions ('Undo will be handled by UndoManager') with no UndoManager evidenced; server-side permission checks for undo are not evidenced.",
-      "evidence": [
-        "frontend/src/pages/Profile.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "backend/main.mo"
-      ]
-    },
-    {
-      "id": "REQ-11",
-      "requirement": "Backend storage and typed APIs for users, attendance, homework, fees, messages with role-scoped queries and stable identifiers supporting listing/filtering for dashboards; support many users.",
-      "reason": "Backend defines several Maps, but the required API surface (typed CRUD for all entities, listing/filtering, role-scoped queries) is not evidenced in the truncated backend. Frontend uses some hooks (e.g., getAllProfiles, getMessages), but complete alignment cannot be confirmed from the shown backend.",
-      "evidence": [
-        "backend/main.mo",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/DashboardChairperson.tsx"
-      ]
-    },
-    {
-      "id": "REQ-12",
-      "requirement": "Online-only syncing: when offline, disable sync-dependent actions (messaging/attendance/homework/fees) with explanation; resume automatic refresh on reconnect.",
-      "reason": "Offline alerts are shown, but the diff does not clearly show that sync-dependent write actions are actually disabled across affected screens (and no auto-refresh resumption/polling is evidenced).",
-      "evidence": [
-        "frontend/src/hooks/useOnlineStatus.ts",
-        "frontend/src/pages/DashboardTeacher.tsx",
-        "frontend/src/pages/DashboardStudentParent.tsx",
-        "frontend/src/components/NotificationPanel.tsx"
-      ]
-    },
-    {
-      "id": "REQ-14",
-      "requirement": "Add generated static image assets under frontend/public/assets/generated with exact filenames and use them in the UI.",
-      "reason": "UI references the generated logo file path, but the diff summary does not show the required image files being added under frontend/public/assets/generated (omitted files exist, but their contents/paths are not evidenced here).",
-      "evidence": [
-        "frontend/src/components/AppLayout.tsx",
-        "frontend/src/pages/RoleSelection.tsx",
-        "frontend/src/pages/PhoneOtpLogin.tsx"
+        "frontend/index.html"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Internet Identity authentication used for login ('Continue with Internet Identity') instead of the requested phone number + OTP authentication.",
-      "reason": "BuildRequest explicitly requires phone+OTP-only auth and disallows third-party providers; the diff implements Internet Identity via @dfinity/auth-client and related hooks.",
-      "evidence": [
-        "frontend/src/hooks/useInternetIdentity.ts",
-        "frontend/src/pages/PhoneOtpLogin.tsx",
-        "frontend/src/pages/ChairpersonLogin.tsx",
-        "frontend/src/main.tsx"
-      ]
-    },
-    {
-      "description": "Secret/admin-token-based backend access control initialization from a URL parameter ('caffeineAdminToken') and calling _initializeAccessControlWithSecret.",
-      "reason": "No requirement mentions a secret admin token bootstrap mechanism or URL-param-based privileged initialization.",
-      "evidence": [
-        "frontend/src/hooks/useActor.ts",
-        "frontend/src/utils/urlParams.ts",
-        "backend/main.mo"
-      ]
-    },
-    {
-      "description": "Caffeine.ai promotional footer link embedded in the application layout.",
-      "reason": "Not requested by the BuildRequest and adds extra user-facing content/branding.",
+      "description": "Notification panel UI and toggle in the main app header (Bell icon, NotificationPanel component usage).",
+      "reason": "BuildRequest does not request adding notifications UI; it is unrelated to PWA installability or in-app URL sharing/install help.",
       "evidence": [
         "frontend/src/components/AppLayout.tsx"
       ]
@@ -163,31 +34,15 @@
   ],
   "confidence": 0.74,
   "changed_files": [
-    "all_files_summary.json",
-    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/index.css",
     "frontend/index.html",
+    "frontend/public/manifest.webmanifest",
+    "frontend/public/offline.html",
+    "frontend/public/sw.js",
     "frontend/src/App.tsx",
+    "frontend/src/components/AppInfoDialog.tsx",
     "frontend/src/components/AppLayout.tsx",
-    "frontend/src/components/NotificationPanel.tsx",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useInternetIdentity.ts",
-    "frontend/src/hooks/useOnlineStatus.ts",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/index.css",
-    "frontend/src/main.tsx",
-    "frontend/src/pages/ChairpersonLogin.tsx",
-    "frontend/src/pages/DashboardChairperson.tsx",
-    "frontend/src/pages/DashboardNonTeaching.tsx",
-    "frontend/src/pages/DashboardStudentParent.tsx",
-    "frontend/src/pages/DashboardTeacher.tsx",
-    "frontend/src/pages/PhoneOtpLogin.tsx",
-    "frontend/src/pages/Profile.tsx",
-    "frontend/src/pages/ProfileCompletion.tsx",
-    "frontend/src/pages/RoleSelection.tsx",
-    "frontend/src/utils/urlParams.ts",
-    "frontend/tailwind.config.js",
+    "frontend/src/hooks/usePwaInstallPrompt.ts",
     "project_state.json"
   ]
 }

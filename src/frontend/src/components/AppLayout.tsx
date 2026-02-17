@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { LogOut, User, Bell } from 'lucide-react';
 import NotificationPanel from './NotificationPanel';
+import AppInfoDialog from './AppInfoDialog';
 import { useState } from 'react';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -26,8 +27,17 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <header 
+        className="border-b bg-card relative overflow-hidden"
+        style={{
+          backgroundImage: 'url(/assets/generated/iems-header-bg.dim_1600x400.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundBlendMode: 'overlay',
+        }}
+      >
+        <div className="absolute inset-0 bg-card/90 backdrop-blur-sm"></div>
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between relative z-10">
           <div className="flex items-center gap-4">
             <img
               src="/assets/generated/iems-logo.dim_512x512.png"
@@ -41,6 +51,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="flex items-center gap-2">
+            <AppInfoDialog />
             <Button variant="ghost" size="icon" onClick={() => setShowNotifications(!showNotifications)}>
               <Bell className="h-5 w-5" />
             </Button>

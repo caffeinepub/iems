@@ -1,330 +1,95 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-16T14:12:29.807Z",
+  "generatedAt": "2026-02-17T13:55:46.335Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 14,
-    "implemented": 10,
+    "total": 3,
+    "implemented": 3,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Create an opening role-selection screen for IEMS with exactly three options: “Student / Parent”, “Teacher”, and “Non-Teaching Staff”. After selecting a role, route the user to a phone number + OTP login screen. Do not show “Chairperson” on the role-selection screen.",
+        "summary": "Add Progressive Web App (PWA) support so IEMS can be installed to a phone home screen (no APK), including a web app manifest, required icons, and basic offline fallback for the app shell.",
         "status": "implemented",
         "plannedFiles": [
+          "frontend/index.html",
+          "frontend/public/manifest.webmanifest",
+          "frontend/public/sw.js",
+          "frontend/public/offline.html",
           "frontend/src/App.tsx",
-          "frontend/src/pages/RoleSelection.tsx"
+          "frontend/public/assets/generated/iems-app-icon.dim_192x192.png",
+          "frontend/public/assets/generated/iems-app-icon.dim_512x512.png"
         ],
         "matchedFiles": [
+          "frontend/index.html",
+          "frontend/public/manifest.webmanifest",
+          "frontend/public/sw.js",
+          "frontend/public/offline.html",
           "frontend/src/App.tsx",
-          "frontend/src/pages/RoleSelection.tsx"
-        ]
-      },
-      {
-        "id": "REQ-10",
-        "summary": "Implement an app-wide Undo system for major actions (profile changes, attendance edits, homework edits, fee edits). Undo must restore the previous saved state and must be consistent across UI sections.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/components/UndoManager.tsx",
-          "frontend/src/components/UndoToast.tsx",
-          "frontend/src/hooks/useAttendance.ts",
-          "frontend/src/hooks/useHomework.ts",
-          "frontend/src/hooks/useFees.ts",
-          "frontend/src/hooks/useProfile.ts"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-11",
-        "summary": "Implement backend storage and APIs aligned to the requested logical collections: users, attendance, homework, fees, messages. Provide query methods needed to power each dashboard and mutation methods needed for each role’s permitted actions. Ensure the backend supports many users simultaneously within the single-actor design.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-12",
-        "summary": "Enforce online-only syncing behavior: the app may open offline, but features that require syncing (messaging, attendance, homework, fees) must clearly indicate lack of connectivity and prevent sync actions while offline. When connectivity returns, the app should resume automatic refresh.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useOnlineStatus.ts",
-          "frontend/src/components/OfflineBanner.tsx",
-          "frontend/src/hooks/useAutoRefreshPolicy.ts",
-          "frontend/src/pages/homework/HomeworkTeacher.tsx",
-          "frontend/src/pages/attendance/AttendanceTeacher.tsx",
-          "frontend/src/pages/fees/Fees.tsx",
-          "frontend/src/components/NotificationPanel.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useOnlineStatus.ts",
-          "frontend/src/components/NotificationPanel.tsx"
-        ]
-      },
-      {
-        "id": "REQ-13",
-        "summary": "Apply a coherent, school-friendly visual theme (colors, typography, spacing, component styling) consistently across all pages and dashboards. Avoid blue & purple as primary brand colors.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/index.css",
-          "frontend/tailwind.config.js",
-          "frontend/src/components/AppLayout.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/index.css",
-          "frontend/tailwind.config.js",
-          "frontend/src/components/AppLayout.tsx"
-        ]
-      },
-      {
-        "id": "REQ-14",
-        "summary": "Add generated static image assets for IEMS branding and use them in the UI (e.g., app header/login screens) by serving them from frontend/public/assets/generated (do not serve generated images via the backend).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/public/assets/generated/iems-logo.dim_512x512.png",
-          "frontend/public/assets/generated/iems-header-bg.dim_1600x400.png",
-          "frontend/public/assets/generated/iems-icons.dim_256x256.png",
-          "frontend/src/components/AppLayout.tsx",
-          "frontend/src/pages/RoleSelection.tsx",
-          "frontend/src/pages/DashboardStudentParent.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/public/assets/generated/iems-logo.dim_512x512.png",
-          "frontend/public/assets/generated/iems-header-bg.dim_1600x400.png",
-          "frontend/public/assets/generated/iems-icons.dim_256x256.png",
-          "frontend/src/components/AppLayout.tsx",
-          "frontend/src/pages/RoleSelection.tsx",
-          "frontend/src/pages/DashboardStudentParent.tsx"
+          "frontend/public/assets/generated/iems-app-icon.dim_192x192.png",
+          "frontend/public/assets/generated/iems-app-icon.dim_512x512.png"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Implement phone number + OTP-only authentication flows for all roles, including a direct phone+OTP login path for Chairperson (not via role selection). Ensure there is no email login anywhere. Accounts must be permanently linked to phone numbers. On first successful login, require profile completion before allowing access to dashboards.",
+        "summary": "Add a user-visible way to retrieve and share the deployed app URL from inside the UI (e.g., in a header/footer “App info” area with a copy-to-clipboard button).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/PhoneOtpLogin.tsx",
-          "frontend/src/pages/ChairpersonLogin.tsx",
-          "frontend/src/pages/ProfileCompletion.tsx",
-          "frontend/src/App.tsx",
-          "frontend/src/components/AuthGate.tsx"
+          "frontend/src/components/AppInfoDialog.tsx",
+          "frontend/src/components/AppLayout.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/PhoneOtpLogin.tsx",
-          "frontend/src/pages/ChairpersonLogin.tsx",
-          "frontend/src/pages/ProfileCompletion.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/components/AppInfoDialog.tsx",
+          "frontend/src/components/AppLayout.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Define role-based access control (RBAC) for: Student, Teacher, Non-Teaching Staff (including drivers), and Chairperson. Enforce that Chairperson can view everything but cannot edit user profiles. Enforce that users can edit only their own profile. Include a secure server-side authorization check for every backend mutation and restricted query.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Implement profile data model and UI for Name, Phone number, and Address or location. Profile becomes visible after first login (post-completion). Store and retrieve profile data linked to the authenticated phone number. Add an Undo capability for profile changes.",
+        "summary": "Add an install help panel (English text) explaining that IEMS is a web app (no APK) and providing short device-appropriate instructions for installing to the home screen when installation is available, otherwise explaining how to add a home-screen shortcut manually.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/Profile.tsx",
-          "frontend/src/hooks/useProfile.ts",
-          "frontend/src/components/UndoToast.tsx",
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/Profile.tsx",
-          "frontend/src/App.tsx"
-        ]
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Implement teacher/class assignment data needed to enforce: only the form teacher can mark attendance, and teachers can mark attendance only for their assigned class. Store attendance by class and date. Provide attendance marking and viewing UI per role, and add Undo support for attendance edits.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/attendance/AttendanceTeacher.tsx",
-          "frontend/src/pages/attendance/AttendanceStudentParent.tsx",
-          "frontend/src/hooks/useAttendance.ts",
-          "frontend/src/pages/DashboardTeacher.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/DashboardTeacher.tsx"
-        ]
-      },
-      {
-        "id": "REQ-6",
-        "summary": "Implement homework/academic updates: teachers can create and send homework to their class; students/parents can view homework on their dashboard. Updates must sync “instantly” via automatic refresh, and homework edits must support Undo.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/pages/homework/HomeworkTeacher.tsx",
-          "frontend/src/pages/homework/HomeworkStudentParent.tsx",
-          "frontend/src/hooks/useHomework.ts",
-          "frontend/src/hooks/useAutoRefreshPolicy.ts"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-7",
-        "summary": "Implement fees management: track pending, paid, and advance fees. Only Chairperson can approve final fee changes. Display school contact and chairperson contact in the fees area. Add Undo support for fee edits.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/fees/Fees.tsx",
-          "frontend/src/hooks/useFees.ts",
-          "frontend/src/pages/DashboardChairperson.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/DashboardChairperson.tsx"
-        ]
-      },
-      {
-        "id": "REQ-8",
-        "summary": "Implement messaging & announcements with a notification panel: Chairperson can broadcast announcements to all users or selected groups; teachers can send notices/homework alerts to students. Messages must sync “instantly” via automatic refresh across sessions.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/NotificationPanel.tsx",
-          "frontend/src/pages/messages/MessageComposer.tsx",
-          "frontend/src/hooks/useMessages.ts",
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/NotificationPanel.tsx",
-          "frontend/src/App.tsx"
-        ]
-      },
-      {
-        "id": "REQ-9",
-        "summary": "Create role-specific dashboards:\n- Student/Parent: attendance view, homework list, printable student ID card\n- Teacher: assigned classes list, attendance marking tools, homework sending tools\n- Chairperson: full school overview dashboard, fees summary, all users list\n- Non-Teaching Staff: mostly view-only dashboard and assigned notices\nEnsure navigation only exposes allowed sections for the logged-in role.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/DashboardStudentParent.tsx",
-          "frontend/src/pages/DashboardNonTeaching.tsx",
-          "frontend/src/pages/chairperson/UsersList.tsx",
+          "frontend/src/hooks/usePwaInstallPrompt.ts",
+          "frontend/src/components/AppInfoDialog.tsx",
           "frontend/src/components/AppLayout.tsx",
-          "frontend/src/components/RoleGuard.tsx",
-          "frontend/src/App.tsx"
+          "frontend/public/assets/generated/iems-header-bg.dim_1600x400.png",
+          "frontend/public/assets/generated/iems-icons.dim_256x256.png",
+          "frontend/src/components/AppLayout.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/DashboardStudentParent.tsx",
-          "frontend/src/pages/DashboardNonTeaching.tsx",
+          "frontend/src/hooks/usePwaInstallPrompt.ts",
+          "frontend/src/components/AppInfoDialog.tsx",
           "frontend/src/components/AppLayout.tsx",
-          "frontend/src/App.tsx"
+          "frontend/public/assets/generated/iems-header-bg.dim_1600x400.png",
+          "frontend/public/assets/generated/iems-icons.dim_256x256.png",
+          "frontend/src/components/AppLayout.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/authorization/MixinAuthorization.mo",
-    "backend/authorization/access-control.mo",
-    "backend/main.mo",
     "build-request.json",
-    "build-template/Dockerfile",
-    "build-template/LICENSE",
     "build-template/README.md",
-    "build-template/deploy.sh",
-    "build-template/icp.yaml",
-    "build-template/package.json",
-    "build-template/pnpm-lock.yaml",
-    "build-template/pnpm-workspace.yaml",
-    "build-template/scripts/prune-unused-images.js",
-    "build-template/scripts/resize-images.js",
-    "build-template/src/backend/canister.yaml",
-    "build-template/src/backend/system-idl/aaaaa-aa.did",
-    "build-template/src/frontend/canister.yaml",
-    "build-template/src/frontend/components.json",
-    "build-template/src/frontend/env.json",
-    "build-template/src/frontend/eslint-rules/no-bigint-in-query-keys.js",
-    "build-template/src/frontend/eslint-rules/require-internet-identity-provider.js",
-    "build-template/src/frontend/eslint.config.js",
-    "build-template/src/frontend/package.json",
-    "build-template/src/frontend/postcss.config.js",
-    "build-template/src/frontend/src/components/ui/accordion.tsx",
-    "build-template/src/frontend/src/components/ui/alert-dialog.tsx",
-    "build-template/src/frontend/src/components/ui/alert.tsx",
-    "build-template/src/frontend/src/components/ui/aspect-ratio.tsx",
-    "build-template/src/frontend/src/components/ui/avatar.tsx",
-    "build-template/src/frontend/src/components/ui/badge.tsx",
-    "build-template/src/frontend/src/components/ui/breadcrumb.tsx",
-    "build-template/src/frontend/src/components/ui/button.tsx",
-    "build-template/src/frontend/src/components/ui/calendar.tsx",
-    "build-template/src/frontend/src/components/ui/card.tsx",
-    "build-template/src/frontend/src/components/ui/carousel.tsx",
-    "build-template/src/frontend/src/components/ui/chart.tsx",
-    "build-template/src/frontend/src/components/ui/checkbox.tsx",
-    "build-template/src/frontend/src/components/ui/collapsible.tsx",
-    "build-template/src/frontend/src/components/ui/command.tsx",
-    "build-template/src/frontend/src/components/ui/context-menu.tsx",
-    "build-template/src/frontend/src/components/ui/dialog.tsx",
-    "build-template/src/frontend/src/components/ui/drawer.tsx",
-    "build-template/src/frontend/src/components/ui/dropdown-menu.tsx",
-    "build-template/src/frontend/src/components/ui/form.tsx",
-    "build-template/src/frontend/src/components/ui/hover-card.tsx",
-    "build-template/src/frontend/src/components/ui/input-otp.tsx",
-    "build-template/src/frontend/src/components/ui/input.tsx",
-    "build-template/src/frontend/src/components/ui/label.tsx",
-    "build-template/src/frontend/src/components/ui/menubar.tsx",
-    "build-template/src/frontend/src/components/ui/navigation-menu.tsx",
-    "build-template/src/frontend/src/components/ui/pagination.tsx",
-    "build-template/src/frontend/src/components/ui/popover.tsx",
-    "build-template/src/frontend/src/components/ui/progress.tsx",
-    "build-template/src/frontend/src/components/ui/radio-group.tsx",
-    "build-template/src/frontend/src/components/ui/resizable.tsx",
-    "build-template/src/frontend/src/components/ui/scroll-area.tsx",
-    "build-template/src/frontend/src/components/ui/select.tsx",
-    "build-template/src/frontend/src/components/ui/separator.tsx",
-    "build-template/src/frontend/src/components/ui/sheet.tsx",
-    "build-template/src/frontend/src/components/ui/sidebar.tsx",
-    "build-template/src/frontend/src/components/ui/skeleton.tsx",
-    "build-template/src/frontend/src/components/ui/slider.tsx",
-    "build-template/src/frontend/src/components/ui/sonner.tsx",
-    "build-template/src/frontend/src/components/ui/switch.tsx",
-    "build-template/src/frontend/src/components/ui/table.tsx",
-    "build-template/src/frontend/src/components/ui/tabs.tsx",
-    "build-template/src/frontend/src/components/ui/textarea.tsx",
-    "build-template/src/frontend/src/components/ui/toggle-group.tsx",
-    "build-template/src/frontend/src/components/ui/toggle.tsx",
-    "build-template/src/frontend/src/components/ui/tooltip.tsx",
-    "build-template/src/frontend/src/hooks/use-mobile.tsx",
-    "build-template/src/frontend/src/lib/utils.ts",
-    "build-template/src/frontend/tsconfig.json",
-    "build-template/src/frontend/vite.config.js",
-    "build-template/tsconfig.json",
     "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/index.css",
     "frontend/index.html",
+    "frontend/public/assets/generated/iems-app-icon.dim_192x192.png",
+    "frontend/public/assets/generated/iems-app-icon.dim_512x512.png",
     "frontend/public/assets/generated/iems-header-bg.dim_1600x400.png",
     "frontend/public/assets/generated/iems-icons.dim_256x256.png",
     "frontend/public/assets/generated/iems-logo.dim_512x512.png",
+    "frontend/public/manifest.webmanifest",
+    "frontend/public/offline.html",
+    "frontend/public/sw.js",
     "frontend/src/App.tsx",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
+    "frontend/src/components/AppInfoDialog.tsx",
     "frontend/src/components/AppLayout.tsx",
-    "frontend/src/components/NotificationPanel.tsx",
     "frontend/src/config.ts",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useInternetIdentity.ts",
-    "frontend/src/hooks/useOnlineStatus.ts",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/index.css",
-    "frontend/src/main.tsx",
-    "frontend/src/pages/ChairpersonLogin.tsx",
-    "frontend/src/pages/DashboardChairperson.tsx",
-    "frontend/src/pages/DashboardNonTeaching.tsx",
-    "frontend/src/pages/DashboardStudentParent.tsx",
-    "frontend/src/pages/DashboardTeacher.tsx",
-    "frontend/src/pages/PhoneOtpLogin.tsx",
-    "frontend/src/pages/Profile.tsx",
-    "frontend/src/pages/ProfileCompletion.tsx",
-    "frontend/src/pages/RoleSelection.tsx",
-    "frontend/src/ui-summary.json",
-    "frontend/src/utils/StorageClient.ts",
-    "frontend/src/utils/urlParams.ts",
-    "frontend/tailwind.config.js",
+    "frontend/src/hooks/usePwaInstallPrompt.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",
